@@ -1,13 +1,11 @@
 require 'spec_helper'
 
 def shape_contains( shape )
-  #This has been split over 2 lines to fix a bug in my syntax highlighter :(
-  regex = %{<svg[\\w\\W]*>[\\W]*<#{shape}[\\w\\W]*\/>[\\W]*<\/svg>}
-  return /#{regex}/
+  /<svg.*>.*<#{shape}.*\/>.*<\/svg>/m
 end
 
 def check_and_delete_circle_file( filename )
-  
+
   ::File.open( filename, "rb"){ |f| @canvas_file = f.read }
 
   @canvas_file.to_s.should match shape_contains( 'circle' )
@@ -26,7 +24,7 @@ describe RubySVGLight do
   #Tests
   it "Draw a circle x=10, y=20, r=30, using assignment and render_file" do
     @canvas = RubySVGLight::Document.new()
-    @canvas.circle(10,20,30)
+    @canvas.circle x: 10, y: 20, radius: 30
     @canvas.render_file('assignment.svg')
 
     check_and_delete_circle_file( 'assignment.svg' )
@@ -34,16 +32,16 @@ describe RubySVGLight do
 
   it "Draw a circle x=10, y=20, r=30, using assignment and to_file" do
     @canvas = RubySVGLight::Document.new()
-    @canvas.circle(10,20,30)
+    @canvas.circle x: 10, y: 20, r: 30
     @canvas.render_file('assignment2.svg')
 
     check_and_delete_circle_file( 'assignment2.svg' )
   end
-  
+
   it "Draw a circle x=10, y=20, r=30, using implicit block" do
     # Implicit Block
     RubySVGLight::Document.generate("implicit.svg") do
-      circle(10,20,30)
+      circle x: 10, y: 20, r: 30
     end
     check_and_delete_circle_file( 'implicit.svg' )
   end
@@ -51,7 +49,7 @@ describe RubySVGLight do
   it "Draw a circle x=10, y=20, r=30, using explicit block" do
     # Explicit Block
     RubySVGLight::Document.generate("explicit.svg") do |svg|
-      svg.circle(10,20,30)
+      svg.circle x: 10, y: 20, r: 30
     end
     check_and_delete_circle_file( 'explicit.svg' )
   end
